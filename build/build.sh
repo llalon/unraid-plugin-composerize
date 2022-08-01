@@ -96,6 +96,8 @@ PLUGIN_FILE=$(get_abs_path "./plugin/$NAME.plg")
 # \____/_/\___/\__,_/_/ /_/\__,_/ .___/
 #                             /_/
 
+echo "Cleaning up..."
+
 rm "$UPSTREAM_BIN_FILE";
 rm "$FILE"
 
@@ -105,6 +107,8 @@ rm "$FILE"
 #  / /_/ / /_/ / / / /_/ /  / /_/ /  __/ /_/ (__  )
 # /_____/\__,_/_/_/\__,_/   \__,_/\___/ .___/____/
 #                                    /_/
+
+echo "Building binary deps from git..."
 
 set -e
 
@@ -117,11 +121,10 @@ pushd "$(mktemp -d)"
   popd
 popd
 
-# veirfy
 if [ -f "$UPSTREAM_BIN_FILE" ]; then
     echo "Dependencies built successfully. Continuing.."
 else
-    echo "ERROR: "
+    echo "ERROR: Failed to build composerize js."
     exit 1
 fi
 
@@ -134,12 +137,17 @@ fi
 # /_____/\__,_/_/_/\__,_/  / .___/\__,_/\___/_/|_|\__,_/\__, /\___/
 #                         /_/                          /____/
 
+echo "Building package for unraid..."
+
 set -e
 
 pushd "$PACKAGE_DIR"
 
+echo "Setting file permissions..."
 find usr/ -type f -exec dos2unix {} \;
 chmod -R 755 usr/
+
+echo "Creating archive..."
 tar -cJf "$FILE" --owner=0 --group=0 usr/
 
 popd
@@ -150,6 +158,8 @@ popd
 # / /_/ / /_/ / /_/ / /_/ / /_/  __/  / / / / / __/ /_/ /
 # \____/ .___/\__,_/\__,_/\__/\___/  /_/_/ /_/_/  \____/
 #     /_/
+
+echo "Updating unraid package info..."
 
 set -e
 
@@ -163,3 +173,4 @@ else
   echo "Failed to build package!"
 fi
 
+echo "Done."
