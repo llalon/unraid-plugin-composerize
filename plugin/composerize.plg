@@ -1,0 +1,59 @@
+<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE PLUGIN [
+<!ENTITY name      "composerize">
+<!ENTITY author    "llalon">
+<!ENTITY version "2022.08.01">
+<!ENTITY launch    "Settings/Composerize;">
+<!ENTITY github    "llalon/unraid-plugin-composerize">
+<!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
+<!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/main/plugins/&name;.plg">
+<!ENTITY md5 "09e3bdb7fec1d6304ed93d7aa1a66603">
+]>
+
+<PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;">
+
+<CHANGES>
+### 2022.08.01
+- Initial Release
+</CHANGES>
+
+<!-- The 'pre-install' script. -->
+<FILE Run="/bin/bash">
+<INLINE>
+# Remove old 'source' files
+rm -f $(ls /boot/config/plugins/&name;/&name;*.txz 2>/dev/null|grep -v '&version;')
+</INLINE>
+</FILE>
+
+<!-- The 'source' file. -->
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;-x86_64-1.txz" Run="upgradepkg --install-new">
+<URL>https://raw.github.com/&github;/main/archive/&name;-&version;.txz</URL>
+</FILE>
+
+<!-- <MD5>&md5;</MD5> -->
+<!-- Disabled for debugging -->
+
+<!-- The 'post-install' script -->
+<FILE Run="/bin/bash">
+<INLINE>
+echo ""
+echo "----------------------------------------------------"
+echo " &name; has been installed."
+echo " Version: &version;"
+echo " This plugin required docker and docker compose plugins to be installed."
+echo "----------------------------------------------------"
+echo ""
+</INLINE>
+</FILE>
+
+<!-- The 'remove' script. -->
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+removepkg &name;
+rm -r /usr/local/emhttp/plugins/&name;
+rm -r /boot/config/plugins/&name;
+</INLINE>
+</FILE>
+
+
+</PLUGIN>

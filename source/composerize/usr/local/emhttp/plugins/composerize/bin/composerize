@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# TODO: build and include composerize binary
+
+echo "$1"
