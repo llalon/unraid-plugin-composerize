@@ -137,7 +137,7 @@ find usr/ -type f -exec dos2unix {} \;
 chmod -R 755 usr/
 
 echo "Creating archive..."
-tar -cJf "$FILE" --owner=0 --group=0 usr/
+gtar -cJf "$FILE" --owner=0 --group=0 usr/
 
 popd
 
