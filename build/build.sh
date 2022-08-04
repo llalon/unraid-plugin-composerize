@@ -62,7 +62,7 @@ function get_abs_path {
 #                    /_/
 
 NAME="composerize"
-VERSION="2022.08.01"
+VERSION=$1
 
 UPSTREAM_REPO="https://github.com/magicmark/composerize"
 UPSTREAM_NAME="composerize"
@@ -76,6 +76,12 @@ PLUGIN_DIR=$(get_abs_path "$PACKAGE_DIR/usr/local/emhttp/plugins/$NAME")
 
 UPSTREAM_BIN_FILE=$(get_abs_path "$PLUGIN_DIR/bin/$UPSTREAM_NAME")
 PLUGIN_FILE=$(get_abs_path "./plugin/$NAME.plg")
+
+if [ -z "$VERSION" ]; then
+  VERSION=$(date '+%Y.%m.%d')
+fi
+
+echo "Building version: ${VERSION}"
 
 #    ________
 #   / ____/ /__  ____ _____  __  ______
