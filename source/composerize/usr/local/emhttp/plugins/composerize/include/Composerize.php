@@ -97,13 +97,11 @@ function composerizeTemplateXML($templateXML): bool
 
 function composerizeCommand($cmd): string
 {
-    // TODO: Replace with native binary
     // TODO: Validate yaml output
-
     debugToConsole("DEBUG: Composerizing command: " . $cmd);
 
     $cmd = str_replace("/usr/local/emhttp/plugins/dynamix.docker.manager/scripts/docker create", 'docker run', $cmd);
-    $systemCmd = "docker run --rm wondercode/composerize-plus:1.1.0 " . $cmd;
+    $systemCmd = COMPOSE_BINARY . " " . $cmd;
 
     $output = array();
     exec($systemCmd, $output, $return);
