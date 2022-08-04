@@ -28,7 +28,6 @@
 #  / ___ |/ /_/ / /_/ / /_/ / /_
 # /_/  |_/_.___/\____/\__,_/\__/
 
-
 # Packages plugin to a .txz file in the archive folder of the repo.
 
 #     ______                 __  _
@@ -38,6 +37,7 @@
 # /_/    \__,_/_/ /_/\___/\__/_/\____/_/ /_/____/
 
 function change_entity {
+    # Changes an entity field in plugin/composerize.plg
     local o=$1; shift
     local l=$1;
 
@@ -73,22 +73,10 @@ ARCHIVE_DIR=$(get_abs_path "./archive")
 FILE=$(get_abs_path "$ARCHIVE_DIR/$FILE_NAME")
 PACKAGE_DIR=$(get_abs_path "./source/$NAME")
 PLUGIN_DIR=$(get_abs_path "$PACKAGE_DIR/usr/local/emhttp/plugins/$NAME")
+
 UPSTREAM_BIN_FILE=$(get_abs_path "$PLUGIN_DIR/bin/$UPSTREAM_NAME")
 PLUGIN_FILE=$(get_abs_path "./plugin/$NAME.plg")
 
-#echo $NAME
-#echo $VERSION
-#echo $UPSTREAM_REPO
-#echo $UPSTREAM_NAME
-#echo $FILE_NAME
-#echo $ARCHIVE_DIR
-#echo $FILE
-#echo $PACKAGE_DIR
-#echo $PLUGIN_DIR
-#echo $UPSTREAM_BIN_FILE
-#echo $PLUGIN_FILE
-#
-#exit 1
 #    ________
 #   / ____/ /__  ____ _____  __  ______
 #  / /   / / _ \/ __ `/ __ \/ / / / __ \
@@ -116,6 +104,7 @@ pushd "$(mktemp -d)"
   git clone $UPSTREAM_REPO
 
   pushd "$UPSTREAM_NAME/packages/composerize"
+    make build
     pkg -t node16-linuxstatic-x64 package.json
     cp -rv "$UPSTREAM_NAME" "$UPSTREAM_BIN_FILE"
   popd
