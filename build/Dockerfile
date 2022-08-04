@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:16-bullseye-slim
 
 RUN npm install npm --location=global
 RUN npm install pkg --location=global
