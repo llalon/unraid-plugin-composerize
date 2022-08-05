@@ -144,7 +144,6 @@ chmod -R 755 usr/
 
 echo "Creating archive..."
 tar -cJf "$FILE" --owner=0 --group=0 usr/
-
 popd
 
 #    __  __          __      __          _       ____
