@@ -2,12 +2,12 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "composerize">
 <!ENTITY author    "llalon">
-<!ENTITY version "2022.08.01">
+<!ENTITY version "2022.08.05">
 <!ENTITY launch    "Settings/Composerize;">
 <!ENTITY github    "llalon/unraid-plugin-composerize">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/main/plugins/&name;.plg">
-<!ENTITY md5 "a61563d4ed0248fda4ee32aee03a9a4f">
+<!ENTITY md5 "aaacee345c726bec7d252e6a888ec37f">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;">
