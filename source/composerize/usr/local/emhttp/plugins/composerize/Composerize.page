@@ -13,9 +13,7 @@ $templates = getDockerTemplateList();
 $plugin = "composerize";
 
 $about = "
-<p>Automatically convert community application docker templates to docker compose.</p>
-<br>
-<br>
+<br/>
 <center>
 <table style='background-color:inherit;margin-left:auto;margin-right:auto;text-align:left;'>
   <tr>
@@ -36,6 +34,17 @@ $about = "
 
 $about = str_replace("\n","",$about);
 ?>
+
+<style>
+div.credits {
+  position: fixed;
+  left: 50%;
+  bottom: 20px; q
+  transform: translate(-50%, -50%);
+  margin: 0 auto;
+  padding: 10px;
+}
+</style>
 
 <script>
 function showCredits() {
@@ -84,4 +93,5 @@ _(Template)_:
 
 </form>
 
-<a onclick='showCredits();'>Credits</a>
+<div class="credits"><a onclick='showCredits();'>Credits</a></div>
+
