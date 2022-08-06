@@ -27,9 +27,9 @@ $about = "
 </table>
 </center>
 <br>
-<center><a href='https://forums.lime-technology.com/topic/51959-plugin-ca-application-auto-update/' target='_blank'>Plugin Support Thread</a></center>
-<center><a href='https://forums.lime-technology.com/topic/51959-plugin-ca-application-auto-update/' target='_blank'>Plugin Repository</a></center>
-<center><a href='https://forums.lime-technology.com/topic/51959-plugin-ca-application-auto-update/' target='_blank'>Upstream Repository</a></center>
+<center><a href='https://github.com/llalon/unraid-plugin-composerize' target='_blank'>Plugin Support Thread</a></center>
+<center><a href='https://github.com/llalon/unraid-plugin-composerize' target='_blank'>Plugin Repository</a></center>
+<center><a href='https://github.com/magicmark/composerize' target='_blank'>Upstream Repository</a></center>
 ";
 
 $about = str_replace("\n","",$about);
