@@ -28,10 +28,8 @@ rm -f $(ls /boot/config/plugins/&name;/&name;*.txz 2>/dev/null|grep -v '&version
 <!-- The 'source' file. -->
 <FILE Name="/boot/config/plugins/&name;/&name;-&version;-x86_64-1.txz" Run="upgradepkg --install-new">
 <URL>https://raw.github.com/&github;/main/archive/&name;-&version;.txz</URL>
+<MD5>&md5;</MD5>
 </FILE>
-
-<!-- <MD5>&md5;</MD5> -->
-<!-- Disabled for debugging -->
 
 <!-- The 'post-install' script -->
 <FILE Run="/bin/bash">
