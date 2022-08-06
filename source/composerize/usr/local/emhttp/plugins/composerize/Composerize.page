@@ -5,10 +5,67 @@ Menu="Utilities"
 ---
 
 <?php
-require_once("/usr/local/emhttp/plugins/composerize/include/Definitions.php");
+$docroot = $docroot ?: $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
+
+require_once("$docroot/plugins/composerize/include/Definitions.php");
 
 $templates = getDockerTemplateList();
+$plugin = "composerize";
+
+$about = "
+<p>Automatically convert community application docker templates to docker compose.</p>
+<br>
+<br>
+<center>
+<table style='background-color:inherit;margin-left:auto;margin-right:auto;text-align:left;'>
+  <tr>
+    <td><strong>llalon</strong></td>
+    <td>Main plugin development</td>
+  </tr>
+  <tr>
+    <td><strong>magicmark</strong></td>
+    <td>Composerize</td>
+  </tr>
+</table>
+</center>
+<br>
+<center><a href='https://forums.lime-technology.com/topic/51959-plugin-ca-application-auto-update/' target='_blank'>Plugin Support Thread</a></center>
+<center><a href='https://forums.lime-technology.com/topic/51959-plugin-ca-application-auto-update/' target='_blank'>Plugin Repository</a></center>
+<center><a href='https://forums.lime-technology.com/topic/51959-plugin-ca-application-auto-update/' target='_blank'>Upstream Repository</a></center>
+";
+
+$about = str_replace("\n","",$about);
 ?>
+
+<script>
+function showCredits() {
+	myAlert("Composerize for unRAID",
+  "<?=$about?>",
+  "/plugins/<?=$plugin?>/images/compose.png",
+  "96x96", 
+  true, 
+  false, 
+  true);
+}
+
+function myAlert(description,textdescription,textimage,imagesize, outsideClick, showCancel, showConfirm, alertType) {
+	if ( !outsideClick ) outsideClick = false;
+	if ( !showCancel )   showCancel = false;
+	if ( !showConfirm )  showConfirm = false;
+	if ( imagesize == "" ) { imagesize = "80x80"; }
+	swal({
+		title: description,
+		text: textdescription,
+		imageUrl: textimage,
+		imageSize: imagesize,
+		allowOutsideClick: outsideClick,
+		showConfirmButton: showConfirm,
+		showCancelButton: showCancel,
+		type: alertType,
+		html: true
+	});
+}
+</script>
 
 <form markdown="1" target="progressFrame" action="/plugins/composerize/include/Composerize.php" method="POST">
 
@@ -24,4 +81,7 @@ _(Template)_:
 
 <input type="submit" name="#default" value="_(Default)_">
 : <input type="submit" name="#apply" value="_(Apply)_" disabled><input type="button" value="_(Done)_">
+
 </form>
+
+<a onclick='showCredits();'>Credits</a>
