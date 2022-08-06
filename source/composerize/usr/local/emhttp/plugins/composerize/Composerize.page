@@ -33,6 +33,7 @@ $about = "
 ";
 
 $about = str_replace("\n","",$about);
+
 ?>
 
 <style>
@@ -48,13 +49,15 @@ div.credits {
 
 <script>
 function showCredits() {
-	myAlert("Composerize for unRAID",
-  "<?=$about?>",
-  "/plugins/<?=$plugin?>/images/compose.png",
-  "96x96", 
-  true, 
-  false, 
-  true);
+	myAlert(
+    "Composerize for unRAID",
+    "<?=$about?>",
+    "/plugins/<?=$plugin?>/images/compose.png",
+    "96x96", 
+    true, 
+    false, 
+    true
+  );
 }
 
 function myAlert(description,textdescription,textimage,imagesize, outsideClick, showCancel, showConfirm, alertType) {
@@ -94,4 +97,8 @@ _(Template)_:
 </form>
 
 <div class="credits"><a onclick='showCredits();'>Credits</a></div>
+
+
+
+
 
