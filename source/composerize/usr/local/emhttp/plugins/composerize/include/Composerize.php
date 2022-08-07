@@ -32,10 +32,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['template_name'])) {
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["template_name"])) {
     //log("INFO: GET received.");
 
-    $name = htmlspecialchars($_GET['template_name']);
+    $name = htmlspecialchars($_POST['template_name']);
 
     ob_start();
-    $response = getComposerize($name);
+    $response = postComposerize($name);
     ob_end_clean();
 
     header('Content-type: application/json');
@@ -49,28 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["template_name"])) {
 #   ██╔══╝  ██║   ██║██║╚██╗██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║
 #   ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║
 #   ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
-
-function getComposerize($name){
-    $result = composerizeTemplateByName($name);
-
-    // Save to fs
-    if (!isset($result["compose"])){
-        return [
-            'body' => [
-                'error_message' => "Failed to generate compose"
-            ],
-            'status' => 500
-        ];
-    }
-
-    return [
-        'body' => [
-            'name' => $result['name'],
-            'compose' => $result['compose'],
-        ],
-        'status' => 200
-    ];
-}
 
 function postComposerize($name){
 
@@ -167,9 +145,7 @@ function composerizeTemplateXML($templateXML)
         ];
     }
 
-    // here
     $compose = composerizeCommand($cmd);
-    // here
 
     if (!$compose){
         //log("ERROR: Unable get docker compose.");
