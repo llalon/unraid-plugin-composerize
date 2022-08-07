@@ -1,7 +1,7 @@
 
 # unraid-plugin-composerize
 
-Automatically convert community application docker templates to docker compose.
+Automatically convert community application docker templates to docker compose using [composerize](https://github.com/magicmark/composerize)
 
 Required plugins:
 - [Compose.Manager](https://forums.unraid.net/topic/114415-plugin-docker-compose-manager/)
@@ -9,5 +9,4 @@ Required plugins:
 
 
 ![screenshot1](/docs/screenshots/screenshot1.png)
-![screenshot2](/docs/screenshots/screenshot2.png)
 
