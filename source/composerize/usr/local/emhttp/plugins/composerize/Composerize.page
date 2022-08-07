@@ -82,8 +82,8 @@ function myAlert(description,textdescription,textimage,imagesize, outsideClick, 
 <form markdown="1" target="progressFrame" action="/plugins/composerize/include/Composerize.php" method="POST">
 
 _(Template)_:
-: <select name="template_name">
-  <option selected="selected">Choose one</option>
+: <select name="template_name" id="template_select" class="text_select">
+  <option value="null" selected="selected">Choose one</option>
   <?php
   foreach($templates as $key => $value){
       echo "<option value='$key'>$key</option>";
@@ -95,6 +95,39 @@ _(Template)_:
 : <input type="submit" name="#apply" value="_(Apply)_" disabled><input type="button" value="_(Done)_">
 
 </form>
+
+<textarea cols='60' rows='8'><span id="compose_string"></span></textarea>
+<label class="form_field"><span id="compose_string"></span></label>
+
+<script type="text/javascript">
+
+    function getComposeString(name){
+        if (name === "null"){
+            return "null";
+        }
+
+        let ret = "";
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "/plugins/composerize/include/Composerize.php",
+            data: {'template_name': name},
+            dataType: 'json',
+            success: function(res)
+            {
+                ret = res['compose'];
+            }
+        });
+
+        return ret;
+    }
+
+    $(document).ready(function() {
+        $("#template_select").change(function() {
+            $('#compose_string').html(getComposeString($(this).val()));
+        }).change();
+    });
+</script>
 
 <div class="credits"><a onclick='showCredits();'>Credits</a></div>
 
