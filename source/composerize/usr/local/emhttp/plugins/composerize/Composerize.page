@@ -96,19 +96,19 @@ _(Template)_:
 
 </form>
 
-<textarea name="compose_preview" cols='60' rows='8'></textarea>
-<label class="form_field"><span id="compose_string"></span></label>
+
+<textarea name="compose_preview" id="compose_preview" cols='280' rows='20'>Choose one</textarea>
 
 <script type="text/javascript">
 
     function getComposeString(name){
         if (name === "null"){
-            return "null";
+            return "Choose one";
         }
 
         let ret = "";
         $.ajax({
-            type: "POST",
+            type: "GET",
             async: false,
             url: "/plugins/composerize/include/Composerize.php",
             data: {'template_name': name},
@@ -124,7 +124,8 @@ _(Template)_:
 
     $(document).ready(function() {
         $("#template_select").change(function() {
-            $('#compose_string').html(getComposeString($(this).val()));
+            const composeString = getComposeString($(this).val());
+            $("#compose_preview").val(composeString);
         }).change();
     });
 </script>
