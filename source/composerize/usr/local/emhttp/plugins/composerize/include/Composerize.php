@@ -7,10 +7,10 @@ require_once("$docroot/plugins/composerize/include/Util.php");
 require_once("$docroot/plugins/dynamix.docker.manager/include/Helpers.php"); // From dynamic docker plugin
 
 # GET - docker run => composerize
-if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["template_name"])) {
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["name"])) {
     //log("INFO: GET received.");
 
-    $name = htmlspecialchars($_GET['template_name']);
+    $name = htmlspecialchars($_GET['name']);
 
     ob_start();
     $response = getComposerize($name);
@@ -21,11 +21,27 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["template_name"])) {
     echo json_encode($response['body']);
 }
 
-# POST - Submits a composerize - changes fs
-else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['template_name'])) {
+# POST - Submit with specified compose data
+else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['name']) && isset($_POST['compose'])) {
     //log("INFO: POST received.");
 
-    $name = htmlspecialchars($_POST['template_name']);
+    $name = htmlspecialchars($_POST['name']);
+    $compose = htmlspecialchars($_POST['compose']);
+
+    ob_start();
+    $response = postCompose($name, $compose);
+    ob_end_clean();
+
+    header('Content-type: application/json');
+    http_response_code($response['status']);
+    echo json_encode($response['body']);
+}
+
+# POST - Submits a composerize - changes fs
+else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['name'])) {
+    //log("INFO: POST received.");
+
+    $name = htmlspecialchars($_POST['name']);
 
     ob_start();
     $response = postComposerize($name);
@@ -62,6 +78,31 @@ function getComposerize($name): array
             'compose' => $result['compose'],
         ],
         'status' => 200
+    ];
+}
+
+function postCompose($name, $compose): array
+{
+    $compose_yaml_file = installCompose($name, $compose);
+
+    if (strlen($compose_yaml_file) > 1) {
+        return [
+            'body' => [
+                'name' => $name,
+                'compose' => $name,
+                'file' => $compose_yaml_file
+            ],
+            'status' => 200
+        ];
+    }
+
+    return [
+        'body' => [
+            'name' => $name,
+            'compose' => $name,
+            'error_message' => "Failed to save to filesystem"
+        ],
+        'status' => 500
     ];
 }
 
@@ -202,8 +243,13 @@ function installCompose($name, $compose): string
 
     mkdir($compose_project_directory, 0755, true);
 
-    file_put_contents($compose_name_file, $name);
-    file_put_contents($compose_yaml_file, $compose);
+    $nameResult = file_put_contents($compose_name_file, $name);
+    $composeResult = file_put_contents($compose_yaml_file, $compose);
+
+    // Unable to save
+    if (!$nameResult || !$composeResult){
+        return "";
+    }
 
     return $compose_yaml_file;
 }
