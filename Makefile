@@ -3,13 +3,9 @@ VERSION ?= ""
 
 .PHONY: all build build-deps clean
 
-build-all:
-	build
-	build-deps
+build-all: build build-deps
 
-clean-all:
-	clean
-	clean-deps
+clean-all: clean clean-deps
 
 build:
 	bash $(ROOT_DIR)/build/build.sh $(VERSION)
