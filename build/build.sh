@@ -88,4 +88,6 @@ else
   echo "Failed to build package!"
 fi
 
+cp -rv "$FILE" "${NAME}-latest.txz"
+
 echo "Done."

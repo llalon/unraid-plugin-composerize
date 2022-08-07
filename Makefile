@@ -17,5 +17,4 @@ build-deps:
 	bash $(ROOT_DIR)/build/build-deps.sh
 
 clean:
-	rm $(ROOT_DIR)/*.txz
-
+	rm $(ROOT_DIR)/composerize-latest.txz
