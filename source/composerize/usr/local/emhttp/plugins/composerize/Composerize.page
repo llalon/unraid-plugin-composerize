@@ -45,9 +45,33 @@ div.credits {
   margin: 0 auto;
   padding: 10px;
 }
+.row {
+    display: flex;
+}
+
+/* Create two unequal columns that floats next to each other */
+.column {
+    float: left;
+    padding: 10px;
+}
+
+.left {
+    width: 25%;
+}
+
+.right {
+    width: 75%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
 </style>
 
-<script>
+<script type="text/javascript">
 function showCredits() {
 	myAlert(
     "Composerize for unRAID",
@@ -77,58 +101,92 @@ function myAlert(description,textdescription,textimage,imagesize, outsideClick, 
 		html: true
 	});
 }
-</script>
 
-<form markdown="1" target="progressFrame" action="/plugins/composerize/include/Composerize.php" method="POST">
+var ogComposeString = ""; // Enable resetting to original
 
-_(Template)_:
-: <select name="template_name" id="template_select" class="text_select">
-  <option value="null" selected="selected">Choose one</option>
-  <?php
-  foreach($templates as $key => $value){
-      echo "<option value='$key'>$key</option>";
-  }
-  ?>
-</select>
-
-<input type="submit" name="#default" value="_(Default)_">
-: <input type="submit" name="#apply" value="_(Apply)_" disabled><input type="button" value="_(Done)_">
-
-</form>
-
-
-<textarea name="compose_preview" id="compose_preview" cols='280' rows='20'>Choose one</textarea>
-
-<script type="text/javascript">
-
-    function getComposeString(name){
-        if (name === "null"){
-            return "Choose one";
-        }
-
-        let ret = "";
-        $.ajax({
-            type: "GET",
-            async: false,
-            url: "/plugins/composerize/include/Composerize.php",
-            data: {'template_name': name},
-            dataType: 'json',
-            success: function(res)
-            {
-                ret = res['compose'];
-            }
-        });
-
-        return ret;
+function getComposeString(name){
+    if (name === "null"){
+        return "Choose one";
     }
 
-    $(document).ready(function() {
-        $("#template_select").change(function() {
-            const composeString = getComposeString($(this).val());
-            $("#compose_preview").val(composeString);
-        }).change();
+    let ret = "";
+    $.ajax({
+        type: "GET",
+        async: false,
+        url: "/plugins/composerize/include/Composerize.php",
+        data: {'name': name},
+        dataType: 'json',
+        success: function(res)
+        {
+            ret = res['compose'];
+        }
     });
+
+    return ret;
+}
+
+function postCompose(){
+    const compose = $("#compose_preview").val();
+    const name = $('#template_select').val();
+
+    let response = {};
+    $.ajax({
+        type: "POST",
+        async: false,
+        url: "/plugins/composerize/include/Composerize.php",
+        data: {'name': name, 'compose': compose},
+        dataType: 'json',
+        success: function(res)
+        {
+            response = res;
+        }
+    });
+
+    console.log(response);
+}
+
+function resetComposeStringToOG(){
+    $("#compose_preview").val(ogComposeString);
+}
+
+$(document).ready(function() {
+    $("#template_select").change(function() {
+        const composeString = getComposeString($(this).val());
+        ogComposeString = composeString;
+        if (composeString != "Choose one"){
+            $("#postComposeButton").removeAttr('disabled');
+        } else {
+            $("#postComposeButton").attr('disabled','disabled');
+        }
+        $("#compose_preview").val(composeString);
+    }).change();
+});
 </script>
+
+<div class="row">
+    <div class="column left">
+        <h2>Template</h2>
+
+        <select name="template_name" id="template_select" class="text_select">
+            <option value="null" selected="selected">Choose one</option>
+            <?php
+            foreach($templates as $key => $value){
+                echo "<option value='$key'>$key</option>";
+            }
+            ?>
+        </select>
+        <br>
+        <input type="button" onClick="window.location.reload();" value="_(Reset)_">
+    </div>
+
+    <div class="column right">
+        <h2>Preview Compose</h2>
+        <textarea name="compose_preview" id="compose_preview" spellcheck="false" cols="80" rows="22" maxlength="8192" style="font-family:bitstream;width:100%">Choose one</textarea>
+        <br>
+        <input type="button" id="postComposeButton" value="Apply" onclick="postCompose()"/>
+        <input type="button" value="Original" onclick="resetComposeStringToOG();">
+    </div>
+</div>
 
 <div class="credits"><a onclick='showCredits();'>Credits</a></div>
 
