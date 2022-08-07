@@ -96,7 +96,7 @@ _(Template)_:
 
 </form>
 
-<textarea cols='60' rows='8'><span id="compose_string"></span></textarea>
+<textarea name="compose_preview" cols='60' rows='8'></textarea>
 <label class="form_field"><span id="compose_string"></span></label>
 
 <script type="text/javascript">
