@@ -6,28 +6,6 @@ require_once("$docroot/plugins/composerize/include/Definitions.php");
 require_once("$docroot/plugins/composerize/include/Util.php");
 require_once("$docroot/plugins/dynamix.docker.manager/include/Helpers.php"); // From dynamic docker plugin
 
-#    ██████╗ ██████╗ ██████╗ ███████╗
-#   ██╔════╝██╔═══██╗██╔══██╗██╔════╝
-#   ██║     ██║   ██║██║  ██║█████╗
-#   ██║     ██║   ██║██║  ██║██╔══╝
-#   ╚██████╗╚██████╔╝██████╔╝███████╗
-#    ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝
-
-# POST - Submits a composerize - changes fs
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['template_name'])) {
-    //log("INFO: POST received.");
-    
-    $name = htmlspecialchars($_POST['template_name']);
-
-    ob_start();
-    $response = postComposerize($name);
-    ob_end_clean();
-
-    header('Content-type: application/json');
-    http_response_code($response['status']);
-    echo json_encode($response['body']);
-}
-
 # GET - docker run => composerize
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["template_name"])) {
     //log("INFO: GET received.");
@@ -43,18 +21,33 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["template_name"])) {
     echo json_encode($response['body']);
 }
 
-#   ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
-#   ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
-#   █████╗  ██║   ██║██╔██╗ ██║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗
-#   ██╔══╝  ██║   ██║██║╚██╗██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║
-#   ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║
-#   ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+# POST - Submits a composerize - changes fs
+else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['template_name'])) {
+    //log("INFO: POST received.");
 
-function getComposerize($name){
+    $name = htmlspecialchars($_POST['template_name']);
+
+    ob_start();
+    $response = postComposerize($name);
+    ob_end_clean();
+
+    header('Content-type: application/json');
+    http_response_code($response['status']);
+    echo json_encode($response['body']);
+}
+
+else {
+    header('Content-type: application/json');
+    http_response_code(404);
+    echo json_encode([]);
+}
+
+function getComposerize($name): array
+{
     $result = composerizeTemplateByName($name);
 
     // Save to fs
-    if (!isset($result["compose"])){
+    if (!isset($result["compose"])) {
         return [
             'body' => [
                 'error_message' => "Failed to generate compose"
@@ -72,7 +65,8 @@ function getComposerize($name){
     ];
 }
 
-function postComposerize($name){
+function postComposerize($name): array
+{
 
     if (!checkDependencies()) {
         //log("ERROR: Missing dependencies.");
@@ -87,7 +81,7 @@ function postComposerize($name){
     $result = composerizeTemplateByName($name);
 
     // Save to fs
-    if (!isset($result["compose"])){
+    if (!isset($result["compose"])) {
         return [
             'body' => [
                 'error_message' => "Failed to generate compose"
@@ -98,7 +92,7 @@ function postComposerize($name){
 
     $compose_yaml_file = installCompose($result['name'], $result['compose']);
 
-    if (!isset($compose_yaml_file)){
+    if (!isset($compose_yaml_file)) {
         return [
             'body' => [
                 'name' => $result['name'],
@@ -119,7 +113,7 @@ function postComposerize($name){
     ];
 }
 
-function composerizeTemplateByName($name)
+function composerizeTemplateByName($name): array
 {
     //log("INFO: Generating compose file for: " . $name . ".");
 
@@ -144,12 +138,13 @@ function composerizeTemplateByName($name)
     return composerizeTemplateXML($templateXML);
 }
 
-function composerizeTemplateXML($templateXML)
+function composerizeTemplateXML($templateXML): array
 {
     $xmlVars = xmlToVar($templateXML);
+    ob_clean();
     $name = $xmlVars['Name'];
     $cmd = xmlToCommand($templateXML, false)[0];
-    $paths = getComposeFilePaths($name); 
+    ob_clean();
 
     if ($name === null || trim($name) === '') {
         //log("ERROR: Unable to parse name.");
@@ -167,11 +162,10 @@ function composerizeTemplateXML($templateXML)
         ];
     }
 
-    // here
     $compose = composerizeCommand($cmd);
-    // here
+    ob_clean();
 
-    if (!$compose){
+    if (!$compose) {
         //log("ERROR: Unable get docker compose.");
         return [
             'compose' => null,
@@ -185,7 +179,8 @@ function composerizeTemplateXML($templateXML)
     ];
 }
 
-function getComposeFilePaths($name){
+function getComposeFilePaths($name): array
+{
     $compose_project_directory = COMPOSE_DIRECTORY . $name . "/";
     $compose_yaml_file = $compose_project_directory . "docker-compose.yml";
     $compose_name_file = $compose_project_directory . "name";
@@ -197,7 +192,8 @@ function getComposeFilePaths($name){
     ];
 }
 
-function installCompose($name, $compose){
+function installCompose($name, $compose): string
+{
     $paths = getComposeFilePaths($name);
 
     $compose_project_directory = $paths['compose_project_directory'];
@@ -212,7 +208,7 @@ function installCompose($name, $compose){
     return $compose_yaml_file;
 }
 
-function composerizeCommand($cmd)
+function composerizeCommand($cmd): string
 {
     // TODO: Validate yaml output
     //log("DEBUG: Composerizing command: " . $cmd);
@@ -223,14 +219,11 @@ function composerizeCommand($cmd)
     $output = array();
     exec($systemCmd, $output, $return);
 
-    if ($return != 0)
-    {
+    if ($return != 0) {
         // error occurred
         //log("DEBUG: Failed to execute cmd");
         return "";
-    }
-    else
-    {
+    } else {
         // success
         //log("DEBUG: Commanded completed successfully.");
         return implode("\n", $output);
