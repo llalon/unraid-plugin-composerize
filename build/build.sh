@@ -56,8 +56,18 @@ ARCHIVE_DIR=$(get_abs_path "./archive")
 FILE=$(get_abs_path "$ARCHIVE_DIR/$FILE_NAME")
 PACKAGE_DIR=$(get_abs_path "./source/$NAME")
 PLUGIN_FILE=$(get_abs_path "./plugin/$NAME.plg")
+DEP_FILE=$(get_abs_path "./source/$NAME/usr/local/emhttp/plugins/$NAME/bin/composerize")
 
 echo "Building version: ${VERSION}"
+
+echo "Checking dependencies.."
+
+if [ -f "$DEP_FILE" ]; then
+  chmod +x "$DEP_FILE"
+else
+  echo "Missing composerize binary! Aborting.."
+  exit 1
+fi
 
 echo "Building package for unraid..."
 
