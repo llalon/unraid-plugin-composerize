@@ -142,7 +142,18 @@ function postCompose(){
         }
     });
 
-    console.log(response);
+    if (response['file'].length > 1){
+        window.alert("File saved to: " + response['file']);
+    } else {
+        window.alert("Oops! Something went wrong. Compose file could not be created.");
+    }
+
+    resetPage();
+}
+
+function resetPage(){
+    // Refresh window
+    window.location.reload();
 }
 
 function resetComposeStringToOG(){
@@ -176,7 +187,7 @@ $(document).ready(function() {
             ?>
         </select>
         <br>
-        <input type="button" onClick="window.location.reload();" value="_(Reset)_">
+        <input type="button" onClick="resetPage();" value="_(Reset)_">
     </div>
 
     <div class="column right">

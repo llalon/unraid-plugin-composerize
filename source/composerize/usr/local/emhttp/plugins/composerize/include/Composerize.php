@@ -27,30 +27,10 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['name']) && isset(
 
     $name = htmlspecialchars($_POST['name']);
     $compose = htmlspecialchars($_POST['compose']);
-    $response = [];
 
     ob_start();
-    $compose_yaml_file = installCompose($name, $compose);
+    $response = postCompose($name, $compose);
     ob_end_clean();
-
-    if (strlen($compose_yaml_file) > 1) {
-        $response = [
-            'body' => [
-                'name' => $name,
-                'compose' => $name,
-            ],
-            'status' => 200
-        ];
-    } else {
-        $response = [
-            'body' => [
-                'name' => $name,
-                'compose' => $name,
-                'error_message' => "Failed to save to filesystem"
-            ],
-            'status' => 500
-        ];
-    }
 
     header('Content-type: application/json');
     http_response_code($response['status']);
@@ -98,6 +78,31 @@ function getComposerize($name): array
             'compose' => $result['compose'],
         ],
         'status' => 200
+    ];
+}
+
+function postCompose($name, $compose): array
+{
+    $compose_yaml_file = installCompose($name, $compose);
+
+    if (strlen($compose_yaml_file) > 1) {
+        return [
+            'body' => [
+                'name' => $name,
+                'compose' => $name,
+                'file' => $compose_yaml_file
+            ],
+            'status' => 200
+        ];
+    }
+
+    return [
+        'body' => [
+            'name' => $name,
+            'compose' => $name,
+            'error_message' => "Failed to save to filesystem"
+        ],
+        'status' => 500
     ];
 }
 
