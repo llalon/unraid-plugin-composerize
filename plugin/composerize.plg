@@ -2,12 +2,14 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "composerize">
 <!ENTITY author    "llalon">
-<!ENTITY version "2022.08.07">
-<!ENTITY launch    "Settings/Composerize;">
+<!ENTITY version "2023.02.08">
+<!ENTITY branch "dev">
+<!ENTITY launch    "Settings/Composerize">
+<!ENTITY file      "&name;-&branch;-&version;.txz">
 <!ENTITY github    "llalon/unraid-plugin-composerize">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
-<!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/main/plugins/&name;.plg">
-<!ENTITY md5 "827adf509b2fd7d1905d515155e95fa4">
+<!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/&branch;/plugin/&name;.plg">
+<!ENTITY md5 "43a761da00b2f24230798698c70a012f">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;">
@@ -26,8 +28,8 @@ rm -f $(ls /boot/config/plugins/&name;/&name;*.txz 2>/dev/null|grep -v '&version
 </FILE>
 
 <!-- The 'source' file. -->
-<FILE Name="/boot/config/plugins/&name;/&name;-&version;-x86_64-1.txz" Run="upgradepkg --install-new">
-<URL>https://raw.github.com/&github;/main/archive/&name;-&version;.txz</URL>
+<FILE Name="/boot/config/plugins/&name;/&file;" Run="upgradepkg --install-new">
+<URL>https://raw.github.com/&github;/&branch;/archive/&file;</URL>
 <MD5>&md5;</MD5>
 </FILE>
 

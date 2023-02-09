@@ -7,44 +7,14 @@ Menu="Utilities"
 <?php
 $docroot = $docroot ?: $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
-require_once("$docroot/plugins/composerize/include/Definitions.php");
+require_once("$docroot/plugins/composerize/include/definitions.php");
+require_once("$docroot/plugins/composerize/include/util.php");
 
 $templates = getDockerTemplateList();
-$plugin = "composerize";
-
-$about = "
-<br/>
-<center>
-<table style='background-color:inherit;margin-left:auto;margin-right:auto;text-align:left;'>
-  <tr>
-    <td><strong>llalon</strong></td>
-    <td>Main plugin development</td>
-  </tr>
-  <tr>
-    <td><strong>magicmark</strong></td>
-    <td>Composerize</td>
-  </tr>
-</table>
-</center>
-<br>
-<center><a href='https://github.com/llalon/unraid-plugin-composerize' target='_blank'>Plugin Support Thread</a></center>
-<center><a href='https://github.com/llalon/unraid-plugin-composerize' target='_blank'>Plugin Repository</a></center>
-<center><a href='https://github.com/magicmark/composerize' target='_blank'>Upstream Repository</a></center>
-";
-
-$about = str_replace("\n","",$about);
-
 ?>
 
 <style>
-div.credits {
-  position: fixed;
-  left: 50%;
-  bottom: 20px; q
-  transform: translate(-50%, -50%);
-  margin: 0 auto;
-  padding: 10px;
-}
+
 .row {
     display: flex;
 }
@@ -69,137 +39,171 @@ div.credits {
     display: table;
     clear: both;
 }
+
+.button-left {
+    float: left;
+}
+
+.button-right {
+    float: right;
+}
 </style>
 
 <script type="text/javascript">
-function showCredits() {
-	myAlert(
-    "Composerize for unRAID",
-    "<?=$about?>",
-    "/plugins/<?=$plugin?>/images/compose.png",
-    "96x96", 
-    true, 
-    false, 
-    true
-  );
+
+const DISABLED_MESSAGE = "Choose one";
+
+let composeString = ""; // Enable resetting to original
+
+$(document).ready(function() {
+    checkDependencies();
+
+    $("#template_select").change(function() {
+        compose($(this).val());
+    }).change();
+});
+
+function setButtonEnableDisable(enabled) {
+    if (enabled) {
+        $("#postComposeButton").removeAttr('disabled');
+    } else {
+        $("#postComposeButton").attr('disabled','disabled');
+    }
 }
 
-function myAlert(description,textdescription,textimage,imagesize, outsideClick, showCancel, showConfirm, alertType) {
-	if ( !outsideClick ) outsideClick = false;
-	if ( !showCancel )   showCancel = false;
-	if ( !showConfirm )  showConfirm = false;
-	if ( imagesize == "" ) { imagesize = "80x80"; }
-	swal({
-		title: description,
-		text: textdescription,
-		imageUrl: textimage,
-		imageSize: imagesize,
-		allowOutsideClick: outsideClick,
-		showConfirmButton: showConfirm,
-		showCancelButton: showCancel,
-		type: alertType,
-		html: true
-	});
+function getComposePreview() {
+    return $("#compose_preview").val();
 }
 
-var ogComposeString = ""; // Enable resetting to original
+function getSelectedName() {
+    return $('#template_select').val();
+}
 
-function getComposeString(name){
-    if (name === "null"){
-        return "Choose one";
+function setPreviewField(value) {
+    $("#compose_preview").val(value);
+}
+
+function compose(name) {
+    if (!name) {
+        setButtonEnableDisable(true);
+        setPreviewField(DISABLED_MESSAGE);
+        return;
     }
 
-    let ret = "";
     $.ajax({
         type: "GET",
-        async: false,
-        url: "/plugins/composerize/include/Composerize.php",
+        url: "/plugins/composerize/include/api/composerize.php",
         data: {'name': name},
         dataType: 'json',
-        success: function(res)
+        success: function(response)
         {
-            ret = res['compose'];
+            composeString = response['compose'];
+
+            setButtonEnableDisable(composeString);
+            setPreviewField(composeString);
+        },
+        error: function() {
+            console.log("Error converting template: " + name);
         }
     });
-
-    return ret;
 }
 
-function postCompose(){
-    const compose = $("#compose_preview").val();
-    const name = $('#template_select').val();
+function postCompose() {
+    const compose = getComposePreview();
+    const name = getSelectedName();
 
-    let response = {};
     $.ajax({
         type: "POST",
-        async: false,
-        url: "/plugins/composerize/include/Composerize.php",
-        data: {'name': name, 'compose': compose},
+        url: "/plugins/composerize/include/api/compose.php",
         dataType: 'json',
-        success: function(res)
-        {
-            response = res;
+        data: {
+            'name': name,
+            'compose': compose
+        },
+        success: function(response) {
+            if (response['success']) {
+                displaySuccessMessage();
+            }
+            else {
+                displayComposeErrorMessage();
+            }
+            resetPage();
+        },
+        error: function() {
+            displayComposeErrorMessage();
         }
     });
+}
 
-    if (response['file'].length > 1){
-        window.alert("File saved to: " + response['file']);
-    } else {
-        window.alert("Oops! Something went wrong. Compose file could not be created.");
-    }
-
-    resetPage();
+function resetCompose() {
+    setPreviewField(composeString);
 }
 
 function resetPage(){
-    // Refresh window
     window.location.reload();
 }
 
-function resetComposeStringToOG(){
-    $("#compose_preview").val(ogComposeString);
+function showHelp() {
+    swal("Help!", 'https://github.com/llalon/unraid-plugin-composerize', "info");
 }
 
-$(document).ready(function() {
-    $("#template_select").change(function() {
-        const composeString = getComposeString($(this).val());
-        ogComposeString = composeString;
-        if (composeString != "Choose one"){
-            $("#postComposeButton").removeAttr('disabled');
-        } else {
-            $("#postComposeButton").attr('disabled','disabled');
+function checkDependencies() {
+    $.ajax({
+        type: "GET",
+        url: "/plugins/composerize/include/api/healthcheck.php",
+        dataType: "json",
+        success: function(response) {
+            if (!response['healthy']) displayDependencyErrorMessage();
+        },
+        error: function () {
+            displayDependencyErrorMessage();
         }
-        $("#compose_preview").val(composeString);
-    }).change();
-});
+    });
+}
+
+function displayDependencyErrorMessage() {
+    swal("Dependency Error!", "Docker and/or Docker compose plugins not installed. Please install them to continue.", "error");
+    $("#postComposeButton").attr('disabled','disabled');
+    $("#reset-button").attr('disabled','disabled');
+    $("#template_select").attr('disabled',true);
+}
+
+function displayComposeErrorMessage() {
+    swal("Compose Error!", "Unable to save compose to disk.", "error");
+}
+
+function displaySuccessMessage() {
+    swal("Success!", "Docker compose saved to disk.", "success");
+}
+
 </script>
 
 <div class="row">
+    <!-- selector side -->
     <div class="column left">
         <h2>Template</h2>
-
         <select name="template_name" id="template_select" class="text_select">
-            <option value="null" selected="selected">Choose one</option>
+            <option value="" selected="selected">Choose one</option>
             <?php
             foreach($templates as $key => $value){
                 echo "<option value='$key'>$key</option>";
             }
             ?>
         </select>
-        <br>
-        <input type="button" onClick="resetPage();" value="_(Reset)_">
     </div>
+    <!-- end selector side -->
 
+    <!-- preview side -->
     <div class="column right">
         <h2>Preview Compose</h2>
         <textarea name="compose_preview" id="compose_preview" spellcheck="false" cols="80" rows="22" maxlength="8192" style="font-family:bitstream;width:100%">Choose one</textarea>
-        <br>
-        <input type="button" id="postComposeButton" value="Apply" onclick="postCompose()"/>
-        <input type="button" value="Original" onclick="resetComposeStringToOG();">
+        <input class="button-left" type="button" value="Apply" id="postComposeButton" onclick="postCompose()"/>
+        <input class="button-left" type="button" value="Original" id="reset-button" onclick="resetCompose();">
+        <input class="button-right" type="button" value="Help" onClick="showHelp();" >
+        <input class="button-right" type="button" value="_(Reset)_" onClick="resetPage();">
     </div>
+    <!-- end preview side -->
 </div>
-
-<div class="credits"><a onclick='showCredits();'>Credits</a></div>
 
 
 
