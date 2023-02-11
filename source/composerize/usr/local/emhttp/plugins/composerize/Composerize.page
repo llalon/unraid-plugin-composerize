@@ -14,167 +14,175 @@ $templates = getDockerTemplateList();
 ?>
 
 <style>
+    .row {
+        display: flex;
+    }
 
-.row {
-    display: flex;
-}
+    /* Create two unequal columns that floats next to each other */
+    .column {
+        float: left;
+        padding: 10px;
+    }
 
-/* Create two unequal columns that floats next to each other */
-.column {
-    float: left;
-    padding: 10px;
-}
+    .left {
+        width: 25%;
+    }
 
-.left {
-    width: 25%;
-}
+    .right {
+        width: 75%;
+    }
 
-.right {
-    width: 75%;
-}
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
 
-/* Clear floats after the columns */
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
-}
+    .button-left {
+        float: left;
+    }
 
-.button-left {
-    float: left;
-}
-
-.button-right {
-    float: right;
-}
+    .button-right {
+        float: right;
+    }
 </style>
 
 <script type="text/javascript">
 
-const DISABLED_MESSAGE = "Choose one";
+    const DISABLED_MESSAGE = "Choose one";
 
-let composeString = ""; // Enable resetting to original
+    let composeString = ""; // Enable resetting to original
 
-$(document).ready(function() {
-    checkDependencies();
+    $(document).ready(function () {
+        checkDependencies();
 
-    $("#template_select").change(function() {
-        compose($(this).val());
-    }).change();
-});
-
-function setButtonEnableDisable(enabled) {
-    if (enabled) {
-        $("#postComposeButton").removeAttr('disabled');
-    } else {
-        $("#postComposeButton").attr('disabled','disabled');
-    }
-}
-
-function getComposePreview() {
-    return $("#compose_preview").val();
-}
-
-function getSelectedName() {
-    return $('#template_select').val();
-}
-
-function setPreviewField(value) {
-    $("#compose_preview").val(value);
-}
-
-function compose(name) {
-    if (!name) {
-        setButtonEnableDisable(true);
-        setPreviewField(DISABLED_MESSAGE);
-        return;
-    }
-
-    $.ajax({
-        type: "GET",
-        url: "/plugins/composerize/include/api/composerize.php",
-        data: {'name': name},
-        dataType: 'json',
-        success: function(response)
-        {
-            composeString = response['compose'];
-
-            setButtonEnableDisable(composeString);
-            setPreviewField(composeString);
-        },
-        error: function() {
-            console.log("Error converting template: " + name);
-        }
+        $("#template-select").change(function () {
+            compose($(this).val());
+        }).change();
     });
-}
 
-function postCompose() {
-    const compose = getComposePreview();
-    const name = getSelectedName();
+    function setButtonEnableDisable(enabled) {
+        if (enabled) {
+            $("#post-compose").removeAttr('disabled');
+        } else {
+            $("#post-compose").attr('disabled', 'disabled');
+        }
+    }
 
-    $.ajax({
-        type: "POST",
-        url: "/plugins/composerize/include/api/compose.php",
-        dataType: 'json',
-        data: {
-            'name': name,
-            'compose': compose
-        },
-        success: function(response) {
-            if (response['success']) {
-                displaySuccessMessage();
+    function getComposePreview() {
+        return $("#compose-preview").val();
+    }
+
+    function getSelectedName() {
+        return $('#template-select').val();
+    }
+
+    function setPreviewField(value) {
+        $("#compose-preview").val(value);
+    }
+
+    function compose(name) {
+        if (!name) {
+            setButtonEnableDisable(true);
+            setPreviewField(DISABLED_MESSAGE);
+            return;
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/plugins/composerize/include/api/composerize.php",
+            data: {'name': name},
+            dataType: 'json',
+            success: function (response) {
+                composeString = response['compose'];
+
+                setButtonEnableDisable(composeString);
+                setPreviewField(composeString);
+            },
+            error: function () {
+                console.log("Error converting template: " + name);
             }
-            else {
+        });
+    }
+
+    function postCompose() {
+        const compose = getComposePreview();
+        const name = getSelectedName();
+
+        $.ajax({
+            type: "POST",
+            url: "/plugins/composerize/include/api/compose.php",
+            dataType: 'json',
+            data: {
+                'name': name,
+                'compose': compose
+            },
+            success: function (response) {
+                if (response['success']) {
+                    displaySuccessMessage();
+                } else {
+                    displayComposeErrorMessage();
+                }
+            },
+            error: function () {
                 displayComposeErrorMessage();
             }
-            resetPage();
-        },
-        error: function() {
-            displayComposeErrorMessage();
-        }
-    });
-}
+        });
+    }
 
-function resetCompose() {
-    setPreviewField(composeString);
-}
+    function resetCompose() {
+        setPreviewField(composeString);
+    }
 
-function resetPage(){
-    window.location.reload();
-}
+    function resetPage() {
+        window.location.reload();
+    }
 
-function showHelp() {
-    swal("Help!", 'https://github.com/llalon/unraid-plugin-composerize', "info");
-}
+    function showHelp() {
+        swal({title: "Help!", text: 'https://github.com/llalon/unraid-plugin-composerize', icon: "info"});
+    }
 
-function checkDependencies() {
-    $.ajax({
-        type: "GET",
-        url: "/plugins/composerize/include/api/healthcheck.php",
-        dataType: "json",
-        success: function(response) {
-            if (!response['healthy']) displayDependencyErrorMessage();
-        },
-        error: function () {
-            displayDependencyErrorMessage();
-        }
-    });
-}
+    function checkDependencies() {
+        $.ajax({
+            type: "GET",
+            url: "/plugins/composerize/include/api/healthcheck.php",
+            dataType: "json",
+            success: function (response) {
+                if (!response['healthy']) displayDependencyErrorMessage();
+            },
+            error: function () {
+                displayDependencyErrorMessage();
+            }
+        });
+    }
 
-function displayDependencyErrorMessage() {
-    swal("Dependency Error!", "Docker and/or Docker compose plugins not installed. Please install them to continue.", "error");
-    $("#postComposeButton").attr('disabled','disabled');
-    $("#reset-button").attr('disabled','disabled');
-    $("#template_select").attr('disabled',true);
-}
+    function displayDependencyErrorMessage() {
+        swal({
+            title: "Dependency Error!",
+            text: "Docker and/or Docker compose plugins not installed. Please install them to continue.",
+            icon: "error"
+        });
+        $("#post-compose").attr('disabled', 'disabled');
+        $("#reset-button").attr('disabled', 'disabled');
+        $("#template-select").attr('disabled', true);
+    }
 
-function displayComposeErrorMessage() {
-    swal("Compose Error!", "Unable to save compose to disk.", "error");
-}
+    function displayComposeErrorMessage() {
+        swal({
+            title: "Compose Error!",
+            text: "Unable to save compose to disk.",
+            icon: "error"
+        }, resetPage);
+    }
 
-function displaySuccessMessage() {
-    swal("Success!", "Docker compose saved to disk.", "success");
-}
+    function displaySuccessMessage() {
+        swal({
+            title: "Success!",
+            text: "Docker compose saved to disk.",
+            icon: "success"
+        }, resetPage);
+    }
 
 </script>
 
@@ -182,13 +190,11 @@ function displaySuccessMessage() {
     <!-- selector side -->
     <div class="column left">
         <h2>Template</h2>
-        <select name="template_name" id="template_select" class="text_select">
+        <select name="template-name" id="template-select" class="text-select">
             <option value="" selected="selected">Choose one</option>
-            <?php
-            foreach($templates as $key => $value){
-                echo "<option value='$key'>$key</option>";
-            }
-            ?>
+            <?php foreach($templates as $key => $value): ?>
+                <option value='<?= $key; ?>'><?= $key; ?></option>
+            <?php endforeach; ?>
         </select>
     </div>
     <!-- end selector side -->
@@ -196,10 +202,11 @@ function displaySuccessMessage() {
     <!-- preview side -->
     <div class="column right">
         <h2>Preview Compose</h2>
-        <textarea name="compose_preview" id="compose_preview" spellcheck="false" cols="80" rows="22" maxlength="8192" style="font-family:bitstream;width:100%">Choose one</textarea>
-        <input class="button-left" type="button" value="Apply" id="postComposeButton" onclick="postCompose()"/>
+        <textarea name="compose-preview" id="compose-preview" spellcheck="false" cols="80" rows="22" maxlength="8192"
+                  style="font-family:bitstream;width:100%">Choose one</textarea>
+        <input class="button-left" type="button" value="Apply" id="post-compose" onclick="postCompose()"/>
         <input class="button-left" type="button" value="Original" id="reset-button" onclick="resetCompose();">
-        <input class="button-right" type="button" value="Help" onClick="showHelp();" >
+        <input class="button-right" type="button" value="Help" onClick="showHelp();">
         <input class="button-right" type="button" value="_(Reset)_" onClick="resetPage();">
     </div>
     <!-- end preview side -->
