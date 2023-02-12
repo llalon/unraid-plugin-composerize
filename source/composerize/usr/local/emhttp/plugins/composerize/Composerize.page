@@ -188,7 +188,7 @@ $templates = getDockerTemplateList();
         <h2>Template</h2>
         <select name="template-name" id="template-select" class="text-select">
             <option value="" selected="selected">Choose one</option>
-            <?php foreach($templates as $key => $value): ?>
+            <?php foreach ($templates as $key => $value): ?>
                 <option value='<?= $key; ?>'><?= $key; ?></option>
             <?php endforeach; ?>
         </select>
