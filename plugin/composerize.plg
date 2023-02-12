@@ -9,7 +9,7 @@
 <!ENTITY github    "llalon/unraid-plugin-composerize">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/&branch;/plugin/&name;.plg">
-<!ENTITY md5 "948fc8022e1926ab3e4d5608bdb03e03">
+<!ENTITY md5 "b256221733179383b7fea447b9f3e1de">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" support="https://github.com/&github;">
