@@ -37,6 +37,14 @@ function change_entity {
     mv "${PLUGIN_FILE}.bak" /tmp/
 }
 
+function set_branch {
+  local o=$1; shift
+  local l=$1;
+
+  sed -i.bak "s/${o}.*${l}/${o}${BRANCH}${l}/g" "${PLUGIN_FILE}"
+  mv "${PLUGIN_FILE}.bak" /tmp/
+}
+
 function get_abs_path {
   echo "$(cd "$(dirname "$1/$2")"; pwd)/$(basename "$1/$2")"
 }
@@ -45,12 +53,18 @@ set -e
 
 NAME="composerize"
 VERSION=$1
+BRANCH=$2
 
-if [ -z "$VERSION" ]; then
-  VERSION=$(date '+%Y.%m.%d')
+if [ -z "$BRANCH" ]; then
+  BRANCH="";
 fi
 
-FILE_NAME="$NAME-$VERSION.txz"
+if [ -z "$VERSION" ]; then
+  VERSION="latest";
+fi
+
+FILE_NAME="$NAME-$BRANCH-$VERSION.txz"
+FILE_NAME=${FILE_NAME/--/-} # remove -- if missing branch
 
 ARCHIVE_DIR=$(get_abs_path "./archive")
 FILE=$(get_abs_path "$ARCHIVE_DIR/$FILE_NAME")
@@ -73,7 +87,7 @@ echo "Building package for unraid..."
 
 pushd "$PACKAGE_DIR"
   echo "Setting file permissions..."
-  find usr/ -type f -exec dos2unix {} \;
+  find usr -type f -exec dos2unix {} \;
   chmod -R 755 usr/
 
   echo "Creating archive..."
@@ -94,10 +108,12 @@ if [ -f "$FILE" ]; then
 
   change_entity "md5" "${hash}"
   change_entity "version" "${VERSION}"
+  change_entity "branch" "${BRANCH}"
+
+#  set_branch "\&github;\/" "\/plugins"
+#  set_branch "\&github;\/" "\/archive"
 else
   echo "Failed to build package!"
 fi
-
-cp -rv "$FILE" "${NAME}-latest.txz"
 
 echo "Done."

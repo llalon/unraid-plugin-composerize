@@ -1,3 +1,6 @@
 .idea/
 .DS_Store
 source/composerize/usr/local/emhttp/plugins/composerize/bin/composerize
+composerize-dev-latest.txz
+composerize-main-latest.txz
+composerize-latest.txz
