@@ -139,10 +139,6 @@ $templates = getDockerTemplateList();
         window.location.reload();
     }
 
-    function showHelp() {
-        swal({title: "Help!", text: 'https://github.com/llalon/unraid-plugin-composerize', icon: "info"});
-    }
-
     function checkDependencies() {
         $.ajax({
             type: "GET",
@@ -206,7 +202,6 @@ $templates = getDockerTemplateList();
                   style="font-family:bitstream;width:100%">Choose one</textarea>
         <input class="button-left" type="button" value="Apply" id="post-compose" onclick="postCompose()"/>
         <input class="button-left" type="button" value="Original" id="reset-button" onclick="resetCompose();">
-        <input class="button-right" type="button" value="Help" onClick="showHelp();">
         <input class="button-right" type="button" value="_(Reset)_" onClick="resetPage();">
     </div>
     <!-- end preview side -->
