@@ -3,13 +3,13 @@
 <!ENTITY name      "composerize">
 <!ENTITY author    "llalon">
 <!ENTITY version "2023.02.12">
-<!ENTITY branch "dev">
+<!ENTITY branch "main">
 <!ENTITY launch    "Settings/Composerize">
 <!ENTITY file      "&name;-&branch;-&version;.txz">
 <!ENTITY github    "llalon/unraid-plugin-composerize">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/&branch;/plugin/&name;.plg">
-<!ENTITY md5 "d054d31a87dde81a988e3055e2aa7cf3">
+<!ENTITY md5 "a14eb1d4bfc576d7c4c6cf2f5279fcae">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" support="https://github.com/&github;">
