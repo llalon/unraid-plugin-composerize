@@ -109,9 +109,6 @@ if [ -f "$FILE" ]; then
   change_entity "md5" "${hash}"
   change_entity "version" "${VERSION}"
   change_entity "branch" "${BRANCH}"
-
-#  set_branch "\&github;\/" "\/plugins"
-#  set_branch "\&github;\/" "\/archive"
 else
   echo "Failed to build package!"
 fi
