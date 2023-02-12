@@ -12,7 +12,7 @@
 <!ENTITY md5 "6b4a15ed7dbbe937ea920a2fa140df04">
 ]>
 
-<PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;">
+<PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" support="https://github.com/&github;">
 
 <CHANGES>
 ### 2022.08.01
