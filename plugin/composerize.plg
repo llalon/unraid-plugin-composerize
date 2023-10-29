@@ -6,11 +6,11 @@
 <!ENTITY launch     "Settings/Composerize">
 <!ENTITY file       "&name;-&version;.txz">
 <!ENTITY repo       "http://192.168.5.11:3003/llalon/unraid-plugin-composerize">
-<!ENTITY branch "main">
+<!ENTITY branch "dev">
 <!ENTITY releaseURL "&repo;/raw/branch/&branch;">
 <!ENTITY pluginURL  "&releaseURL;/archive/&file;">
 <!ENTITY pluginURL  "&releaseURL;/plugin/&name;.plg">
-<!ENTITY md5 "c8c26bea53ed5c8b592165b2a1dec6c0">
+<!ENTITY md5 "802bf6f41c686196cfb95f8b56f7c1da">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" support="&repo;">
