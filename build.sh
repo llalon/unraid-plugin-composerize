@@ -10,9 +10,6 @@ fi
 set -e
 
 USAGE="Usage: $(basename "$0") <plugin> [branch] [version]"
-
-# Default branch is not in package name
-DEFAULT_BRANCH="main"
 ARCHIVE_DIR="./archive"
 SOURCE_DIR="./source"
 
@@ -32,7 +29,7 @@ if [[ $PLUGIN_FILE != *.plg ]]; then
 fi
 
 if [ -z "$BRANCH" ]; then
-  BRANCH=$DEFAULT_BRANCH
+  BRANCH="main"
 fi
 
 if [ -z "$VERSION" ]; then
@@ -46,9 +43,7 @@ if [ -z "$NAME" ]; then
     exit 1
 fi
 
-FILE_NAME="$NAME-$BRANCH-$VERSION.txz"
-FILE_NAME=${FILE_NAME/-${DEFAULT_BRANCH}/-}
-FILE_NAME=${FILE_NAME/--/-}
+FILE_NAME="$NAME-$VERSION.txz"
 PACKAGE_DIR="$SOURCE_DIR/$NAME"
 
 # Validate source
@@ -99,7 +94,6 @@ if [ -f "$FILE" ]; then
   "${PREFIX}sed" -i.bak '/'"<!ENTITY md5"'/s/.*/'"<!ENTITY md5 \"${hash}\">"'/' "${PLUGIN_FILE}"
   "${PREFIX}sed" -i.bak '/'"<!ENTITY version"'/s/.*/'"<!ENTITY version \"${VERSION}\">"'/' "${PLUGIN_FILE}"
   "${PREFIX}sed" -i.bak '/'"<!ENTITY branch"'/s/.*/'"<!ENTITY branch \"${BRANCH}\">"'/' "${PLUGIN_FILE}"
-  "${PREFIX}sed" -i.bak '/'"<!ENTITY file"'/s/.*/'"<!ENTITY file \"${FILE_NAME}\">"'/' "${PLUGIN_FILE}"
 else
   echo "Failed to build package!"
 fi
