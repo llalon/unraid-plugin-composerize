@@ -99,6 +99,7 @@ if [ -f "$FILE" ]; then
   "${PREFIX}sed" -i.bak '/'"<!ENTITY md5"'/s/.*/'"<!ENTITY md5 \"${hash}\">"'/' "${PLUGIN_FILE}"
   "${PREFIX}sed" -i.bak '/'"<!ENTITY version"'/s/.*/'"<!ENTITY version \"${VERSION}\">"'/' "${PLUGIN_FILE}"
   "${PREFIX}sed" -i.bak '/'"<!ENTITY branch"'/s/.*/'"<!ENTITY branch \"${BRANCH}\">"'/' "${PLUGIN_FILE}"
+  "${PREFIX}sed" -i.bak '/'"<!ENTITY file"'/s/.*/'"<!ENTITY file \"${FILE_NAME}\">"'/' "${PLUGIN_FILE}"
 else
   echo "Failed to build package!"
 fi
