@@ -1,59 +1,58 @@
 <?xml version='1.0' standalone='yes'?>
 <!DOCTYPE PLUGIN [
-<!ENTITY name      "composerize">
-<!ENTITY author    "llalon">
-<!ENTITY version "2023.02.12">
+<!ENTITY name       "composerize">
+<!ENTITY author     "llalon">
+<!ENTITY version "20231029">
+<!ENTITY launch     "Settings/Composerize">
+<!ENTITY file       "&name;-&version;.txz">
+<!ENTITY repo       "http://192.168.5.11:3003/llalon/unraid-plugin-composerize">
 <!ENTITY branch "main">
-<!ENTITY launch    "Settings/Composerize">
-<!ENTITY file      "&name;-&branch;-&version;.txz">
-<!ENTITY github    "llalon/unraid-plugin-composerize">
-<!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
-<!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/&branch;/plugin/&name;.plg">
-<!ENTITY md5 "b256221733179383b7fea447b9f3e1de">
+<!ENTITY releaseURL "&repo;/raw/branch/&branch;">
+<!ENTITY pluginURL  "&releaseURL;/archive/&file;">
+<!ENTITY pluginURL  "&releaseURL;/plugin/&name;.plg">
+<!ENTITY md5 "c8c26bea53ed5c8b592165b2a1dec6c0">
 ]>
 
-<PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" support="https://github.com/&github;">
+<PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" support="&repo;">
 
 <CHANGES>
+### 2023.11.01
+- General enhancements and bug fixes
+- Moved composerize to client side.
 ### 2022.08.01
 - Initial Release
 </CHANGES>
 
-<!-- The 'pre-install' script. -->
 <FILE Run="/bin/bash">
 <INLINE>
-# Remove old 'source' files
 rm -f $(ls /boot/config/plugins/&name;/&name;*.txz 2>/dev/null|grep -v '&version;')
 </INLINE>
 </FILE>
 
-<!-- The 'source' file. -->
 <FILE Name="/boot/config/plugins/&name;/&file;" Run="upgradepkg --install-new">
-<URL>https://raw.github.com/&github;/&branch;/archive/&file;</URL>
+<URL>&releaseURL;/archive/&file;</URL>
 <MD5>&md5;</MD5>
 </FILE>
 
-<!-- The 'post-install' script -->
 <FILE Run="/bin/bash">
 <INLINE>
 echo ""
 echo "----------------------------------------------------"
 echo " &name; has been installed."
 echo " Version: &version;"
+echo ""
 echo " This plugin required docker and docker compose plugins to be installed."
 echo "----------------------------------------------------"
 echo ""
 </INLINE>
 </FILE>
 
-<!-- The 'remove' script. -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
-removepkg &name;-&branch;-&version;
+removepkg &name;-&version;
 rm -r /usr/local/emhttp/plugins/&name;
 rm -r /boot/config/plugins/&name;
 </INLINE>
 </FILE>
-
 
 </PLUGIN>
