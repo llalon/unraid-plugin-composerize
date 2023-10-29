@@ -10,7 +10,7 @@
 <!ENTITY releaseURL "&repo;/raw/branch/&branch;">
 <!ENTITY pluginURL  "&releaseURL;/archive/&file;">
 <!ENTITY pluginURL  "&releaseURL;/plugin/&name;.plg">
-<!ENTITY md5 "384f7babeb9b889c11a83fe60bd72d9f">
+<!ENTITY md5 "db88be1f650c62bac43ac8ddbeed044f">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" support="&repo;">
