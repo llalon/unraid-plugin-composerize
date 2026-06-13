@@ -1,0 +1,15 @@
+{
+  "name": "unraid-composerize-plugin",
+  "version": "1.0.0",
+  "description": "Unraid plugin for composerize",
+  "private": true,
+  "scripts": {
+    "build": "esbuild source/composerize/src/index.js --bundle --outfile=source/composerize/usr/local/emhttp/plugins/composerize/js/composerize.min.js --minify"
+  },
+  "dependencies": {
+    "composerize": "^1.7.6"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  }
+}

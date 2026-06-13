@@ -1,2 +1,4 @@
 .idea/
 *.bak
+node_modules/
+source/php/usr/local/emhttp/plugins/composerize/js/composerize.min.js
